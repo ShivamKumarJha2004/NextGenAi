@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 
 const HeroSection = () => {
   const [scrollY, setScrollY] = useState(0);
