@@ -7,9 +7,9 @@ export const onBoardingSchema = z.object({
     required_error: "Please select a specific sub-industry",
   }),
   bio:z.string().max(500).optional(),
-  experience:z.string().transform((val) => {parseInt(val, 10)}).pipe((
-    z.number().min(0,"Experience must be a atlaest 0 years")
+  experience: z.string().transform((val) => parseInt(val, 10)).pipe(
+    z.number().min(0, "Experience must be at least 0 years")
     .max(50, "Experience cannot exceed 50 years")
-  )),
+  ),
   skills: z.string().transform((val=>val?val.split(",").map(skill => skill.trim()).filter(Boolean):undefined)), 
 });
