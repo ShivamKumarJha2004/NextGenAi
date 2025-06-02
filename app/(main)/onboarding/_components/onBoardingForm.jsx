@@ -1,5 +1,5 @@
 "use client"
-import { React, useState } from 'react'
+import { React, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { onBoardingSchema } from '../../../lib/schema'
@@ -12,10 +12,22 @@ import { Input } from '../../../../components/ui/input'
 import { number } from 'zod'
 import { Textarea } from '../../../../components/ui/textarea'
 import { Button } from '../../../../components/ui/button'
-const onBoardingForm = () => {
+import { updateUser } from '../../../../actions/user'
+import useFetch from '../../../../hooks/useFetch'
+import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
+
+const onBoardingForm = () => {  
 
     const [selectedIndustries, setselectedIndustries] = useState(null);
     const router = useRouter();
+
+    const {data:updateData,
+        loading:updateLoading,
+        error:updateError,
+        fetchData
+    }=useFetch(updateUser)
+        
     const { register, handleSubmit, formState: { errors },
         setValue, watch } = useForm({
             resolver: zodResolver(onBoardingSchema),
@@ -23,9 +35,24 @@ const onBoardingForm = () => {
         const watchIndustry=watch("industry")
 
         const onSubmit =async(val)=>{
-            console.log(val);
+           try {
+            const formatedIndustry=`${val.industry} - ${val.subIndustry}.toLowerCase()
+            .replace(/ /g,"-")`
+            await fetchData({...val, industry: formatedIndustry})
             
-        }
+           } catch (error) {
+            console.log("Error in onboarding form",error);
+            
+           }
+            
+        };
+        useEffect(()=>{
+            if(updateData?.success && !updateLoading ){
+                toast.success("Profile updated successfully")
+                router.push("/dashboard");
+                router.refresh();
+            }
+        },[updateData,updateLoading])
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
@@ -146,18 +173,26 @@ const onBoardingForm = () => {
                                 </p>
                             )}
                         </div>
-
+                      
                         <Button 
+                            disabled={updateLoading}
                             type="submit" 
                             className="w-full h-10 sm:h-11 text-sm sm:text-base font-medium bg-purple-600 hover:bg-purple-700 text-white transition-colors"
                         >
-                            Complete Profile
+                            {updateLoading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                "Complete Profile"
+                            )}
                         </Button>
+                      
                     </form>
                 </CardContent>
-            </Card>
+            </Card> 
         </div>
-
     )
 }
 

@@ -5,7 +5,8 @@ import { currentUser } from "@clerk/nextjs/server"
 
 
 export async function updateUser(data) {
-  const { userId } = auth();
+  const { userId } = await currentUser();
+  console.log("userId",userId);
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -84,8 +85,8 @@ export async function fetchingUserOnboarding() {
             isOnboarded: !!dbUser?.industry,
         };
     } catch (error) {
-        console.log("Error fetching user onboarding status:", error);
-        throw new Error("Failed to fetch user onboarding status");
+        console.log("Error fetching user onboarding status:", error.message);
+        throw new Error(`Failed to fetch user onboarding status: ${error.message}`);
     }
 }
 
