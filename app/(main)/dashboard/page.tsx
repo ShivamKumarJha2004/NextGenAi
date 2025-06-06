@@ -1,8 +1,11 @@
 import { redirect } from 'next/navigation'
 import { fetchingUserOnboarding } from '../../../actions/user'
+import { getIndustryInsights } from '../../../actions/dashboard'
+import Dashboard from "./_components/Dashboard"
 
 export default async function DashboardPage() {
   const { isOnboarded } = await fetchingUserOnboarding()
+  const { industryInsights } = await getIndustryInsights()
 
   if (!isOnboarded) {
     redirect('/onboarding')
@@ -10,9 +13,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Industry Insights</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      </div>
+      <Dashboard industryInsights={industryInsights} />
     </div>
   )
 }

@@ -2,52 +2,55 @@
 import { db } from "../lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { currentUser } from "@clerk/nextjs/server"
-
+import { generateAiInsights } from "./dashboard";
 
 export async function updateUser(data) {
-  const { userId } = await currentUser();
-  console.log("userId",userId);
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
   try {
+    // console.log("data", data);
+    const { userId } = await auth();
+    // console.log("userId", userId);
+
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    if (!db) {
+      throw new Error("Database connection not initialized");
+    }
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const formatedIndustry = `${data.industry} - ${data.subIndustry}`.toLowerCase().replace(/\s+/g, "-");
+
     const result = await db.$transaction(async (tx) => {
-      // find if user exists
-      const industryInsights = await tx.industryInsights.findUnique({
-        where: { industry: data.industry },
+      // First, check if industry insights exist
+      let industryInsights = await tx.IndustryInsight.findUnique({
+        where: { industry: formatedIndustry },
       });
 
-      // if industry does not exist create it with default values - will replace with ai later
+      // If not, create them first
       if (!industryInsights) {
-        await tx.industryInsights.create({
+        const insights = await generateAiInsights();
+        industryInsights = await tx.IndustryInsight.create({
           data: {
-            industry: data.industry,
-            salaryRanges: [],
-            growthRates: 0,
-            demandLevel: "Medium",
-            topSkills: [],
-            marketOutlook: "Stable",
-            keyTrends: [],
-            recommendedSkills: [],
-            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+            industry: formatedIndustry,
+            ...insights,
+            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           },
         });
       }
 
-      // update user with industry
+      // Then update the user with the same industry
       const updateUser = await tx.user.update({
         where: { clerkUserId: userId },
         data: {
-          industry: data.industry,
+          industry: formatedIndustry, // Use the same formatted industry
           experiance: data.experiance,
           bio: data.bio,
           skills: data.skills,
@@ -56,37 +59,37 @@ export async function updateUser(data) {
 
       return { updateUser, industryInsights };
     }, {
-      timeout: 10000, // <- moved this into correct position as 2nd argument to $transaction
+      timeout: 10000,
     });
 
-    return result.user;
+    return { success: true, user: result.updateUser };
 
   } catch (error) {
     console.error("Error updating user:", error);
-    throw new Error("Failed to update user");
+    throw new Error(error.message || "Failed to update user");
   }
 }
-export async function fetchingUserOnboarding() {
-    const user = await currentUser();
-    
-    if (!user) {
-        throw new Error("User not authenticated");
-    }
-    
-    try {
-        const dbUser = await db.user.findUnique({
-            where: { clerkUserId: user.id },
-            select: {
-                industry: true,
-            },
-        });
-        
-        return {
-            isOnboarded: !!dbUser?.industry,
-        };
-    } catch (error) {
-        console.log("Error fetching user onboarding status:", error.message);
-        throw new Error(`Failed to fetch user onboarding status: ${error.message}`);
-    }
-}
 
+export async function fetchingUserOnboarding() {
+  const user = await currentUser();
+  
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+  
+  try {
+    
+    const dbUser = await db.user.findUnique({
+      where: { clerkUserId: user.id },
+      select: {
+        industry: true,
+      },
+    });
+    
+    return {
+      isOnboarded: !!dbUser?.industry,
+    };
+  } catch (error) {
+    throw new Error(`Failed to fetch user onboarding status: ${error.message}`);
+  }
+}

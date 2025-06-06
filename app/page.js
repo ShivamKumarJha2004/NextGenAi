@@ -1,11 +1,10 @@
-import { Button } from "../components/ui/button";
 import React from "react";
-import HeroSection from "../components/Hero";
-import Features from "../components/Features";
-import StaticFeatures from "../components/StaticFeatures";
-import WorkFlow from "../components/WorkFlow";
-import Testimonials from "../components/Testimonials";
-import FAQ from "../components/Faq";
+import HeroSection from "../components/hero";
+import Features from "../components/features";
+import StaticFeatures from "../components/staticFeatures";
+import WorkFlow from "../components/workFlow";
+import Testimonials from "../components/testimonials";
+import FAQ from "../components/faq";
 export default function Home() {
   return (
     <div>
