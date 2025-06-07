@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger, SelectVa
 import { Label } from '../../../../components/ui/label'
 import { industries } from '../../../../data/industry'
 import { Input } from '../../../../components/ui/input'
-import { number } from 'zod'
 import { Textarea } from '../../../../components/ui/textarea'
 import { Button } from '../../../../components/ui/button'
 import { updateUser } from '../../../../actions/user'

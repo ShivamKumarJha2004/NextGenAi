@@ -41,23 +41,23 @@ export const generateAiInsights=async(industry)=>
     
 export const getIndustryInsights = async () => {
     try {
-        const userId = await currentUser();
-        if (!userId) {
+        const user = await currentUser();
+        if (!user) {
             throw new Error("User not authenticated");
         }
-        const user = await db.user.findUnique({
-            where: { clerkUserId: userId },
+        const dbUser = await db.user.findUnique({
+            where: { clerkUserId: user.id },
             include: {
                 industryInsight: true
             }
         });
-        if (!user) {
+        if (!dbUser) {
             throw new Error("User not found");
         }
-        if (!user.industryInsight) {
+        if (!dbUser.industryInsight) {
             throw new Error("Industry insights not found");
         }
-        return { industryInsights: user.industryInsight };
+        return { industryInsights: dbUser.industryInsight };
     } catch (error) {
         console.error("Error fetching industry insights:", error);
         throw error;

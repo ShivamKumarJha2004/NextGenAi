@@ -40,7 +40,7 @@ const Dashboard = ({ industryInsights }) => {
         }
     }
 
-    const outLookIcon = MarketOutLook(industryInsights.marketOutlook).icon;
+  //  const outLookIcon = MarketOutLook(industryInsights.marketOutlook).icon;
     const outLookColor = MarketOutLook(industryInsights.marketOutlook).color;
 
     const lastUpdatedDate = format(new Date(industryInsights.lastUpdated), "dd/MM/yyyy")
@@ -52,7 +52,7 @@ const Dashboard = ({ industryInsights }) => {
     return (
         <div className="space-y-6 p-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Industry Insights</h1>
+                <h1 className="text-3xl font-bold mt-4">Industry Insights</h1>
                 <Badge variant="outline" className="text-sm">
                     Last Updated: {lastUpdatedDate}
                 </Badge>
@@ -62,7 +62,7 @@ const Dashboard = ({ industryInsights }) => {
                 <Card className="bg-white/5 backdrop-blur-sm border-gray-800">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="text-lg">Market Outlook</CardTitle>
-                        <outLookIcon className={`h-5 w-5 ${outLookColor}`} />
+                        {/* <outLookIcon className={`h-5 w-5 ${outLookColor}`} /> */}
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
@@ -75,7 +75,7 @@ const Dashboard = ({ industryInsights }) => {
                 <Card className="bg-white/5 backdrop-blur-sm border-gray-800">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="text-lg">Industry Growth</CardTitle>
-                        <outLookIcon className={`h-5 w-5 ${outLookColor}`} />
+                        {/* <outLookIcon className={`h-5 w-5 ${outLookColor}`} /> */}
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
@@ -89,7 +89,7 @@ const Dashboard = ({ industryInsights }) => {
                 <Card className="bg-white/5 backdrop-blur-sm border-gray-800">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="text-lg">Demand Level</CardTitle>
-                        <outLookIcon className={`h-5 w-5 ${outLookColor}`} />
+                        {/* <outLookIcon className={`h-5 w-5 ${outLookColor}`} /> */}
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
@@ -138,6 +138,72 @@ const Dashboard = ({ industryInsights }) => {
                     </div>
                 </CardContent>
             </Card>
+            <Card className="bg-white/5 backdrop-blur-sm border-gray-800">
+                <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        Key Industry Trends
+                    </CardTitle>
+                    <CardDescription>
+                        Trending skills that you might want to explore
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {industryInsights.keyTrends.map((trend, index) => (
+                            <div 
+                                key={index} 
+                                className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                            >
+                                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-primary mt-2" />
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium">{trend}</p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Growing demand in the industry
+                                    </p>
+                                </div>
+                                <Badge variant="outline" className="text-xs">
+                                    Trending
+                                </Badge>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="bg-white/5 backdrop-blur-sm border-gray-800">
+                <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        Recommanded Skills 
+                    </CardTitle>
+                    <CardDescription>
+                        Trending skills that you might want to explore
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {industryInsights.recommendedSkills.map((trend, index) => (
+                            <div 
+                                key={index} 
+                                className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                            >
+                                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-primary mt-2" />
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium">{trend}</p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Growing demand in the industry
+                                    </p>
+                                </div>
+                                <Badge variant="outline" className="text-xs">
+                                    Trending
+                                </Badge>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+           
+            
         </div>
     )
 }

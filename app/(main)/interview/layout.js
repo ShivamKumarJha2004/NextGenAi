@@ -1,6 +1,6 @@
-import React     from 'react'
+import React from 'react'
 
-export default function DashboardLayout({ children }) {
+export default function InterviewLayout({ children }) {
     return (
         <div className="h-full">
             {children}

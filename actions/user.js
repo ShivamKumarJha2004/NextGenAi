@@ -29,12 +29,11 @@ export async function updateUser(data) {
     const formatedIndustry = `${data.industry} - ${data.subIndustry}`.toLowerCase().replace(/\s+/g, "-");
 
     const result = await db.$transaction(async (tx) => {
-      // First, check if industry insights exist
       let industryInsights = await tx.IndustryInsight.findUnique({
         where: { industry: formatedIndustry },
       });
+      console.log("industryInsights",industryInsights);
 
-      // If not, create them first
       if (!industryInsights) {
         const insights = await generateAiInsights();
         industryInsights = await tx.IndustryInsight.create({
@@ -43,14 +42,13 @@ export async function updateUser(data) {
             ...insights,
             nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           },
-        });
+        });    
       }
 
-      // Then update the user with the same industry
       const updateUser = await tx.user.update({
         where: { clerkUserId: userId },
         data: {
-          industry: formatedIndustry, // Use the same formatted industry
+          industry: data.industry,
           experiance: data.experiance,
           bio: data.bio,
           skills: data.skills,
